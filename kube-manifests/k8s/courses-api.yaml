@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coursesapi-deployment
+  labels:
+    app: coursesapi
+spec:
+  selector:
+    matchLabels:
+      app: coursesapi
+  template:
+    metadata:
+      labels:
+        app: coursesapi
+    spec:
+      containers:
+      - name: coursesapi
+        image: coursesapi:latest
+        #image: acrkarazl.azurecr.io/coursesapi:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Development
+          - name: ConnectionStrings__SqlDatabase
+            value: Server=mssql-service,1433;Database=myDataBase;User Id=SA;Password=Pa55w0rd2022;
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: coursesapi-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: coursesapi
+  ports:
+  - port: 8081
+    targetPort: 80
+    protocol: TCP
+

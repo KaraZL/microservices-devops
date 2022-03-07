@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mssql-deployment
+  labels:
+    app: coursesdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coursesdb
+  template:
+    metadata:
+      labels:
+        app: coursesdb
+    spec:
+      containers:
+      - name: coursesdb
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        # resources:
+        #   limits:
+        #     memory: "128Mi"
+        #     cpu: "500m"
+        # create errors
+        ports:
+        - containerPort: 1433
+        env:
+        - name: SA_PASSWORD
+          value: Pa55w0rd2022
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_PID
+          value: "Express"
+      #   volumeMounts:
+      #     - mountPath: /var/opt/mssql/data
+      #       name: mssqldb
+      # volumes:
+      # - name: mssqldb
+      #   persistentVolumeClaim:
+      #     claimName: mssql-claim      
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssql-service
+spec:
+  type: ClusterIP
+  selector:
+    app: coursesdb
+  ports:
+  - port: 1433
+    targetPort: 1433
+    protocol: TCP
+    #name: coursesdb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssql-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: coursesdb
+  ports:
+  - port: 1433
+    targetPort: 1433
+    protocol: TCP
