@@ -1,8 +1,14 @@
 version: '3.9'
 
+#docker-compose -f .\docker-compose.yml -f .\docker-compose.override.yml up -d
+#docker-compose -f .\docker-compose.yml -f .\docker-compose.override.yml down
+
 services:
   coursesdb:
     image: mcr.microsoft.com/mssql/server:2019-CU15-ubuntu-20.04
+
+  rabbitmq:
+    image: rabbitmq:3.9-management
   
   courses.api:
     image: coursesapi

@@ -1,7 +1,11 @@
-﻿using Courses.API.Data;
+﻿using AutoMapper;
+using Courses.API.Data;
+using Courses.API.Dtos;
+using Courses.API.MessageBus;
 using Courses.API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -14,10 +18,14 @@ namespace Courses.API.Controllers
     public class CoursesController : ControllerBase
     {
         private readonly ICoursesRepository _repo;
+        private readonly IMapper _mapper;
+        private readonly IMessageBusClient _messageBusClient;
 
-        public CoursesController(ICoursesRepository repo)
+        public CoursesController(ICoursesRepository repo, IMapper mapper, IMessageBusClient messageBusClient)
         {
             _repo = repo;
+            _mapper = mapper;
+            _messageBusClient = messageBusClient;
         }
 
         [HttpGet("{id}", Name = "GetBasket")]
@@ -41,6 +49,22 @@ namespace Courses.API.Controllers
             var result = await _repo.CreateCourse(course);
 
             return result is true ? Ok(course) : BadRequest();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult> SendCourseToBus([FromBody] CoursePublishedDto message)
+        {
+            try
+            {
+                _messageBusClient.PublishNewCourse(message);
+                Console.WriteLine("--> Message sent to RabbitMQ");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"--> Couldn't send message : {ex.Message}");
+            }
+            
+            return Ok(message);
         }
 
         [HttpDelete]

@@ -11,12 +11,22 @@ services:
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Express"
 
+  rabbitmq:
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - 5672:5672 #rabbitmq
+      - 15672:15672 #rabbitmq management dashboard
+
   courses.api:
     container_name: courses-api
     depends_on:
       - coursesdb
+      - rabbitmq
     ports:
       - 8000:80
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:SqlDatabase=Server=coursesdb,1433;Database=myDataBase;User Id=SA;Password=Pa55w0rd2022;"
+      - "RabbitMQHost=rabbitmq"
+      - "RabbitMQPort:5672"
