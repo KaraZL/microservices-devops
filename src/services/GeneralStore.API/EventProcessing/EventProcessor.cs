@@ -33,6 +33,7 @@ namespace GeneralStore.API.EventProcessing
             {
                 case EventType.CoursesPublished:
                     AddCourse(message);
+                    Console.WriteLine("--> Added Course to DB");
                     break;
                 default:
                     break;
