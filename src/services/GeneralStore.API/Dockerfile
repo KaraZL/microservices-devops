@@ -1,9 +1,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 as publish
 WORKDIR app/
-COPY *.csproj ./
+COPY src/services/GeneralStore.API/*.csproj ./
 RUN dotnet restore
 
-COPY . ./
+COPY src/services/GeneralStore.API/ ./
 RUN dotnet publish -c Release -o out/
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0

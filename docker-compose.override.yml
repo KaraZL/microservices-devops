@@ -1,0 +1,55 @@
+version: '3.9'
+
+services:
+  coursesdb:
+    container_name: coursesdb
+    restart: always
+    ports:
+      - 1433:1433
+    environment:
+      SA_PASSWORD: "Pa55w0rd2022"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+
+  storedb:
+    container_name: storedb
+    restart: always
+    ports:
+      - 1434:1434
+    environment:
+      SA_PASSWORD: "Pa55w0rd2022"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+
+  rabbitmq:
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - 5672:5672 #rabbitmq
+      - 15672:15672 #rabbitmq management dashboard
+
+  courses.api:
+    container_name: courses-api
+    depends_on:
+      - coursesdb
+      - rabbitmq
+    ports:
+      - 8000:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:SqlDatabase=Server=coursesdb,1433;Database=CoursesDb;User Id=SA;Password=Pa55w0rd2022;"
+      - "RabbitMQHost=rabbitmq"
+      - "RabbitMQPort:5672"
+
+  generalstore.api:
+    container_name: generalstore-api
+    depends_on:
+      - storedb
+      - rabbitmq
+    ports:
+      - 8001:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:SqlDatabase=Server=coursesdb,1433;Database=StoreDb;User Id=SA;Password=Pa55w0rd2022;"
+      - "RabbitMQHost=rabbitmq"
+      - "RabbitMQPort:5672"

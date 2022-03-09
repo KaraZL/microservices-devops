@@ -7,12 +7,21 @@ services:
   coursesdb:
     image: mcr.microsoft.com/mssql/server:2019-CU15-ubuntu-20.04
 
+  storedb:
+    image: mcr.microsoft.com/mssql/server:2019-CU15-ubuntu-20.04
+
   rabbitmq:
     image: rabbitmq:3.9-management
   
   courses.api:
     image: coursesapi
-    build: .
-      #context: .
-      #dockerfile: src/services/Courses.API/Dockerfile
+    build:
+      context: .
+      dockerfile: src/services/Courses.API/Dockerfile
+
+  generalstore.api:
+    image: generalstoreapi
+    build:
+      context: .
+      dockerfile: src/services/GeneralStore.API/Dockerfile
       
