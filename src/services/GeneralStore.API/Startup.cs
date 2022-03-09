@@ -11,6 +11,7 @@ using AutoMapper;
 using GeneralStore.API.Data;
 using Microsoft.EntityFrameworkCore;
 using GeneralStore.API.EventProcessing;
+using GeneralStore.API.MessageBus;
 
 namespace GeneralStore.API
 {
@@ -31,6 +32,8 @@ namespace GeneralStore.API
             });
 
             services.AddSingleton<IEventProcessor, EventProcessor>();
+            //BackgroundService est une classe de base pour l’implémentation d’une exécution longue IHostedService .
+            services.AddHostedService<MessageBusSubscriber>();
             services.AddScoped<IStoreRepository, SqlStoreRepository>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

@@ -24,7 +24,7 @@ namespace GeneralStore.API.EventProcessing
             _mapper = mapper;
         }
 
-        //Une fois Event définie, on ajoute les données à la BDD ou autre action
+        //Une fois Event définit, on ajoute les données à la BDD ou autre action
         public void ProcessEvent(string message)
         {
             var eventType = DetermineEvent(message);
@@ -32,7 +32,7 @@ namespace GeneralStore.API.EventProcessing
             switch (eventType)
             {
                 case EventType.CoursesPublished:
-                    //TO DO
+                    AddCourse(message);
                     break;
                 default:
                     break;
@@ -59,7 +59,7 @@ namespace GeneralStore.API.EventProcessing
         }
 
         //Ajouter course reçue depuis RabbitMQ to DB
-        private void addCourse(string coursePublishedMessage)
+        private void AddCourse(string coursePublishedMessage)
         {
             //Ici on récupère les services manuellement
             using (var scope = _scope.CreateScope())
