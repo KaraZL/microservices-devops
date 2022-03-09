@@ -7,6 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using GeneralStore.API.Data;
+using Microsoft.EntityFrameworkCore;
+using GeneralStore.API.EventProcessing;
 
 namespace GeneralStore.API
 {
@@ -22,6 +26,14 @@ namespace GeneralStore.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<DatabaseContext>(options => {
+                options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
+            });
+
+            services.AddSingleton<IEventProcessor, EventProcessor>();
+            services.AddScoped<IStoreRepository, SqlStoreRepository>();
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddRazorPages();
         }
 
@@ -47,6 +59,8 @@ namespace GeneralStore.API
             {
                 endpoints.MapRazorPages();
             });
+
+            PrepDb.PrepPopulation(app);
         }
     }
 }

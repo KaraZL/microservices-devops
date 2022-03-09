@@ -51,11 +51,13 @@ namespace Courses.API.Controllers
             return result is true ? Ok(course) : BadRequest();
         }
 
+        //Envoi sur le service bus
         [HttpPost("[action]")]
         public async Task<ActionResult> SendCourseToBus([FromBody] CoursePublishedDto message)
         {
             try
             {
+                message.Event = "Courses_Published";
                 _messageBusClient.PublishNewCourse(message);
                 Console.WriteLine("--> Message sent to RabbitMQ");
             }
