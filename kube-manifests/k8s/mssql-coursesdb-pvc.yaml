@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mssql-claim
+  name: mssql-coursesdb-claim
 spec:
   accessModes:
     - ReadWriteMany

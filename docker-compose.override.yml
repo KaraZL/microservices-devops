@@ -15,7 +15,7 @@ services:
     container_name: storedb
     restart: always
     ports:
-      - 1434:1433 #1343 pour y accéder mais 1433 car c est le port de SQL server. On ne le change pas
+      - 1434:1433 #1343 pour y acceder mais 1433 car c est le port de SQL server. On ne le change pas
     environment:
       SA_PASSWORD: "Pa55w0rd2022"
       ACCEPT_EULA: "Y"

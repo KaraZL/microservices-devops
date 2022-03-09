@@ -1,22 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: coursesapi-deployment
+  name: generalstoreapi-deployment
   labels:
-    app: coursesapi
+    app: generalstoreapi
 spec:
   selector:
     matchLabels:
-      app: coursesapi
+      app: generalstoreapi
   template:
     metadata:
       labels:
-        app: coursesapi
+        app: generalstoreapi
     spec:
       containers:
-      - name: coursesapi
-        image: coursesapi:latest
-        #image: acrkarazl.azurecr.io/coursesapi:latest
+      - name: generalstoreapi
+        image: generalstoreapi:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
@@ -24,7 +23,7 @@ spec:
         - name: ASPNETCORE_ENVIRONMENT
           value: Development
         - name: ConnectionStrings__SqlDatabase
-          value: Server=mssql-coursesdb-service,1433;Database=CoursesDb;User Id=SA;Password=Pa55w0rd2022;
+          value: Server=mssql-storedb-service,1433;Database=StoreDb;User Id=SA;Password=Pa55w0rd2022;
         - name: RabbitMQHost
           value: rabbitmq-clusterip-service
         - name: RabbitMQPort
@@ -33,13 +32,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: coursesapi-service
+  name: generalstoreapi-service
 spec:
   type: LoadBalancer
   selector:
-    app: coursesapi
+    app: generalstoreapi
   ports:
-  - port: 8081
+  - port: 8082
     targetPort: 80
     protocol: TCP
 
