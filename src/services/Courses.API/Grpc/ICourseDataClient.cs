@@ -6,5 +6,6 @@ namespace Courses.API.Grpc
     public interface ICourseDataClient
     {
         IEnumerable<Course> ReturnAllCourses();
+        Course GetCourseById(int id);
     }
 }

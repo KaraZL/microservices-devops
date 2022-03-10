@@ -27,8 +27,19 @@ namespace GeneralStore.API.Grpc
 
             //on ajoute les courses
             foreach (var course in courses) {
-                response.Course.Add(_mapper.Map<GrpcCourseModel>(course));
+                response.Course.Add(_mapper.Map<GrpcCourseModel>(course)); //Transforme en message grpc
             }
+
+            return response;
+        }
+
+        public override async Task<SingleCourse> GetCourseById(GetCourseByIdRequest request, ServerCallContext context)
+        {
+            var response = new SingleCourse();
+
+            var course = await _repo.GetCourseById(request.Id); //Request contient les données envoyées
+
+            response.Course = _mapper.Map<GrpcCourseModel>(course); //On transforme en message grpc
 
             return response;
         }

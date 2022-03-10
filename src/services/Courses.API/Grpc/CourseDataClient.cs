@@ -19,7 +19,7 @@ namespace Courses.API.Grpc
             _mapper = mapper;
         }
 
-        public IEnumerable<Course> ReturnAllCourses()
+        private GrpcCourse.GrpcCourseClient ConnectToGrpc()
         {
             Console.WriteLine($"--> Calling Grpc Service {_configuration["GrpcCourseServer"]}");
 
@@ -27,6 +27,33 @@ namespace Courses.API.Grpc
             //Grpc server address
             var channel = GrpcChannel.ForAddress(_configuration["GrpcCourseServer"]);
             var client = new GrpcCourse.GrpcCourseClient(channel); //GrpcCourseClient is from the nuget itself
+
+            return client;
+        }
+
+        public Course GetCourseById(int id)
+        {
+            var client = ConnectToGrpc(); // On se connecte
+
+            var request = new GetCourseByIdRequest { Id = id }; // On cree une requete
+
+            try
+            {
+                var reply = client.GetCourseById(request);
+                Console.WriteLine($"--> Connected to GRPC server and received : {reply.Course.Name}");
+                return _mapper.Map<Course>(reply.Course);
+            }
+            catch (Exception ex )
+            {
+                Console.WriteLine($"--> Couldn't call Grpc Server : {ex.Message}");
+                return null;
+            }
+        }
+
+        public IEnumerable<Course> ReturnAllCourses()
+        {
+            var client = ConnectToGrpc();
+
             var request = new GetAllRequest(); //cree une requete pour la fonction getallcourses
 
             try

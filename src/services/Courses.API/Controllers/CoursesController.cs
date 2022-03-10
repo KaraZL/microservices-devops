@@ -80,6 +80,14 @@ namespace Courses.API.Controllers
             return Ok(courses);
         }
 
+        [HttpPost("[action]")]
+        public ActionResult<Course> GetACourseByIdFromGrpcServer(int id)
+        {
+            var course = _grpcClient.GetCourseById(id);
+
+            return Ok(course);
+        }
+
         [HttpDelete]
         public async Task<ActionResult> DeleteCourse(int id)
         {
