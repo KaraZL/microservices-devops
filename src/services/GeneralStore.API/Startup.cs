@@ -12,6 +12,9 @@ using GeneralStore.API.Data;
 using Microsoft.EntityFrameworkCore;
 using GeneralStore.API.EventProcessing;
 using GeneralStore.API.MessageBus;
+using GeneralStore.API.Grpc;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace GeneralStore.API
 {
@@ -30,6 +33,8 @@ namespace GeneralStore.API
             services.AddDbContext<DatabaseContext>(options => {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
             });
+
+            services.AddGrpc();
 
             services.AddSingleton<IEventProcessor, EventProcessor>();
             //BackgroundService est une classe de base pour l’implémentation d’une exécution longue IHostedService .
@@ -61,6 +66,15 @@ namespace GeneralStore.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+
+                //Pour chaque service
+                endpoints.MapGrpcService<GrpcCourseService>();
+
+                //envoie les informations du contrat entre serveur et client au client
+                endpoints.MapGet("/protos/courses.proto", async context =>
+                {
+                    await context.Response.WriteAsync(File.ReadAllText("Protos/courses.proto"));
+                });
             });
 
             PrepDb.PrepPopulation(app);

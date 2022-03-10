@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Courses.API.Data;
 using Courses.API.MessageBus;
+using Courses.API.Grpc;
 
 namespace Courses.API
 {
@@ -32,6 +33,7 @@ namespace Courses.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ICoursesRepository, SqlCoursesRepository>();
+            services.AddScoped<ICourseDataClient, CourseDataClient>();
 
             //Connections are meant to be long-lived.
             //Opening a connection for every operation (e.g. publishing a message) would be very inefficient and is highly discouraged.

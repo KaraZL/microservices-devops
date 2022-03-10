@@ -28,6 +28,16 @@ services:
       - 5672:5672 #rabbitmq
       - 15672:15672 #rabbitmq management dashboard
 
+  #pw admin1234
+  portainer:
+    container_name: portainer
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    ports:
+      - 9000:9000 #9000 plutot que 9443 parce que http et non https
+
   courses.api:
     container_name: courses-api
     depends_on:
@@ -39,7 +49,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:SqlDatabase=Server=coursesdb,1433;Database=CoursesDb;User Id=SA;Password=Pa55w0rd2022;"
       - "RabbitMQHost=rabbitmq"
-      - "RabbitMQPort:5672"
+      - "RabbitMQPort=5672"
+      - "GrpcCourseServer=http://generalstore-api:666" #666 port du http2 de grpc
 
   generalstore.api:
     container_name: generalstore-api
@@ -52,4 +63,6 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:SqlDatabase=Server=storedb,1433;Database=StoreDb;User Id=SA;Password=Pa55w0rd2022;"
       - "RabbitMQHost=rabbitmq"
-      - "RabbitMQPort:5672"
+      - "RabbitMQPort=5672"
+      - "Kestrel:Endpoints:WebApi:Url=http://generalstore-api:80" #Http1
+      - "Kestrel:Endpoints:Grpc:Url=http://generalstore-api:666" #Http2

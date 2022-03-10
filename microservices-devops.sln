@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{8E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Courses.API", "src\services\Courses.API\Courses.API.csproj", "{7D9AE68C-DA1D-4565-B2BE-732E1CB1FEC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneralStore.API", "src\services\GeneralStore.API\GeneralStore.API.csproj", "{5787D515-4E19-4F6F-B621-85F0514BD27B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeneralStore.API", "src\services\GeneralStore.API\GeneralStore.API.csproj", "{5787D515-4E19-4F6F-B621-85F0514BD27B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

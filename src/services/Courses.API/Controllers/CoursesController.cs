@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Courses.API.Data;
 using Courses.API.Dtos;
+using Courses.API.Grpc;
 using Courses.API.MessageBus;
 using Courses.API.Models;
 using Microsoft.AspNetCore.Http;
@@ -20,12 +21,14 @@ namespace Courses.API.Controllers
         private readonly ICoursesRepository _repo;
         private readonly IMapper _mapper;
         private readonly IMessageBusClient _messageBusClient;
+        private readonly ICourseDataClient _grpcClient;
 
-        public CoursesController(ICoursesRepository repo, IMapper mapper, IMessageBusClient messageBusClient)
+        public CoursesController(ICoursesRepository repo, IMapper mapper, IMessageBusClient messageBusClient, ICourseDataClient grpcClient)
         {
             _repo = repo;
             _mapper = mapper;
             _messageBusClient = messageBusClient;
+            _grpcClient = grpcClient;
         }
 
         [HttpGet("{id}", Name = "GetBasket")]
@@ -67,6 +70,14 @@ namespace Courses.API.Controllers
             }
             
             return Ok(message);
+        }
+
+        [HttpGet("[action]")]
+        public ActionResult<IEnumerable<Course>> GetAllCoursesFromGrpcServer()
+        {
+            var courses = _grpcClient.ReturnAllCourses();
+
+            return Ok(courses);
         }
 
         [HttpDelete]
