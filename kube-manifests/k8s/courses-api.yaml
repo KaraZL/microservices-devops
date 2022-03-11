@@ -21,10 +21,16 @@ spec:
         ports:
         - containerPort: 80
         env:
-          - name: ASPNETCORE_ENVIRONMENT
-            value: Development
-          - name: ConnectionStrings__SqlDatabase
-            value: Server=mssql-service,1433;Database=myDataBase;User Id=SA;Password=Pa55w0rd2022;
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ConnectionStrings__SqlDatabase
+          value: Server=mssql-coursesdb-service,1433;Database=CoursesDb;User Id=SA;Password=Pa55w0rd2022;
+        - name: RabbitMQHost
+          value: rabbitmq-clusterip-service
+        - name: RabbitMQPort
+          value: "5672"
+        - name: GrpcCourseServer
+          value: http://generalstoreapi-clusterip-service:666
 ---
 apiVersion: v1
 kind: Service

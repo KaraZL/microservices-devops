@@ -1,0 +1,35 @@
+syntax = "proto3"; //Version
+
+option csharp_namespace = "GeneralStore.API.Protos";
+
+//On definit les services (les appels)
+service GrpcCourse {
+	//fonction
+	rpc GetAllCourses (GetAllRequest) returns (CourseResponse);
+	rpc GetCourseById (GetCourseByIdRequest) returns (SingleCourse);
+}
+
+//On definit des messages, cela peut être des envoies ou des receptions
+
+message GetAllRequest {} //Pas besoin de parametres
+
+message GetCourseByIdRequest {
+	int32 id = 1;
+}
+
+message GrpcCourseModel { //Egalement un message mais utilise en tant que patron pour d autres messages
+	int32 id = 1; //Nombre indique l ordre des paramètres et non une valeur
+	string name = 2;
+	int32 duration = 3;
+	double price = 4;
+}
+
+message CourseResponse {
+	//Utilise le patron
+	//repeated implémente toutes les interfaces de collection .NET standard, telles que IList<T> et IEnumerable<T>
+	repeated GrpcCourseModel course = 1; 
+}
+
+message SingleCourse {
+	GrpcCourseModel course = 1;
+}

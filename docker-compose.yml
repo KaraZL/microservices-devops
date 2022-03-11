@@ -1,0 +1,32 @@
+version: '3.9'
+
+#docker-compose -f .\docker-compose.yml -f .\docker-compose.override.yml up -d
+#docker-compose -f .\docker-compose.yml -f .\docker-compose.override.yml down
+
+services:
+  coursesdb:
+    image: mcr.microsoft.com/mssql/server:2019-CU15-ubuntu-20.04
+
+  storedb:
+    image: mcr.microsoft.com/mssql/server:2019-CU15-ubuntu-20.04
+
+  rabbitmq:
+    image: rabbitmq:3.9-management
+
+  portainer:
+    image: portainer/portainer-ce
+  
+  courses.api:
+    image: coursesapi
+    build:
+      context: .
+      dockerfile: src/services/Courses.API/Dockerfile
+
+  generalstore.api:
+    image: generalstoreapi
+    build:
+      context: .
+      dockerfile: src/services/GeneralStore.API/Dockerfile
+      
+volumes:
+  portainer_data:

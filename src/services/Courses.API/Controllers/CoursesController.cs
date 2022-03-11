@@ -1,7 +1,12 @@
-﻿using Courses.API.Data;
+﻿using AutoMapper;
+using Courses.API.Data;
+using Courses.API.Dtos;
+using Courses.API.Grpc;
+using Courses.API.MessageBus;
 using Courses.API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -14,10 +19,16 @@ namespace Courses.API.Controllers
     public class CoursesController : ControllerBase
     {
         private readonly ICoursesRepository _repo;
+        private readonly IMapper _mapper;
+        private readonly IMessageBusClient _messageBusClient;
+        private readonly ICourseDataClient _grpcClient;
 
-        public CoursesController(ICoursesRepository repo)
+        public CoursesController(ICoursesRepository repo, IMapper mapper, IMessageBusClient messageBusClient, ICourseDataClient grpcClient)
         {
             _repo = repo;
+            _mapper = mapper;
+            _messageBusClient = messageBusClient;
+            _grpcClient = grpcClient;
         }
 
         [HttpGet("{id}", Name = "GetBasket")]
@@ -41,6 +52,40 @@ namespace Courses.API.Controllers
             var result = await _repo.CreateCourse(course);
 
             return result is true ? Ok(course) : BadRequest();
+        }
+
+        //Envoi sur le service bus
+        [HttpPost("[action]")]
+        public async Task<ActionResult> SendCourseToBus([FromBody] CoursePublishedDto message)
+        {
+            try
+            {
+                message.Event = "Courses_Published";
+                _messageBusClient.PublishNewCourse(message);
+                Console.WriteLine("--> Message sent to RabbitMQ");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"--> Couldn't send message : {ex.Message}");
+            }
+            
+            return Ok(message);
+        }
+
+        [HttpGet("[action]")]
+        public ActionResult<IEnumerable<Course>> GetAllCoursesFromGrpcServer()
+        {
+            var courses = _grpcClient.ReturnAllCourses();
+
+            return Ok(courses);
+        }
+
+        [HttpPost("[action]")]
+        public ActionResult<Course> GetACourseByIdFromGrpcServer(int id)
+        {
+            var course = _grpcClient.GetCourseById(id);
+
+            return Ok(course);
         }
 
         [HttpDelete]

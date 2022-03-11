@@ -5,7 +5,9 @@ VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{8E8B1737-B885-4A61-AA78-DC17FCCB1C60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.API", "src\services\Courses.API\Courses.API.csproj", "{7D9AE68C-DA1D-4565-B2BE-732E1CB1FEC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Courses.API", "src\services\Courses.API\Courses.API.csproj", "{7D9AE68C-DA1D-4565-B2BE-732E1CB1FEC5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeneralStore.API", "src\services\GeneralStore.API\GeneralStore.API.csproj", "{5787D515-4E19-4F6F-B621-85F0514BD27B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +19,17 @@ Global
 		{7D9AE68C-DA1D-4565-B2BE-732E1CB1FEC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D9AE68C-DA1D-4565-B2BE-732E1CB1FEC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D9AE68C-DA1D-4565-B2BE-732E1CB1FEC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5787D515-4E19-4F6F-B621-85F0514BD27B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5787D515-4E19-4F6F-B621-85F0514BD27B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5787D515-4E19-4F6F-B621-85F0514BD27B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5787D515-4E19-4F6F-B621-85F0514BD27B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7D9AE68C-DA1D-4565-B2BE-732E1CB1FEC5} = {8E8B1737-B885-4A61-AA78-DC17FCCB1C60}
+		{5787D515-4E19-4F6F-B621-85F0514BD27B} = {8E8B1737-B885-4A61-AA78-DC17FCCB1C60}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B826CDD6-8B76-4A34-8672-479868AA8CAE}

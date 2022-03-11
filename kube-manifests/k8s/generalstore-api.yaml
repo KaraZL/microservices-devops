@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: generalstoreapi-deployment
+  labels:
+    app: generalstoreapi
+spec:
+  selector:
+    matchLabels:
+      app: generalstoreapi
+  template:
+    metadata:
+      labels:
+        app: generalstoreapi
+    spec:
+      containers:
+      - name: generalstoreapi
+        image: generalstoreapi:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ConnectionStrings__SqlDatabase
+          value: Server=mssql-storedb-service,1433;Database=StoreDb;User Id=SA;Password=Pa55w0rd2022;
+        - name: RabbitMQHost
+          value: rabbitmq-clusterip-service
+        - name: RabbitMQPort
+          value: "5672"
+        - name: Kestrel__Endpoints__WebApi__Url
+          value: http://generalstoreapi-clusterip-service:80
+        - name: Kestrel__Endpoints__Grpc__Url
+          value: http://generalstoreapi-clusterip-service:666
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: generalstoreapi-loadbalancer-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: generalstoreapi
+  ports:
+  - port: 8082
+    targetPort: 80
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: generalstoreapi-clusterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: generalstoreapi
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+  - name: grpc
+    port: 666
+    targetPort: 666
+    protocol: TCP
+

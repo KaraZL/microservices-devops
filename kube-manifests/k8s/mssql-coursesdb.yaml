@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mssql-deployment
+  name: mssql-coursesdb-deployment
   labels:
     app: coursesdb
 spec:
@@ -42,7 +42,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mssql-service
+  name: mssql-coursesdb-service
 spec:
   type: ClusterIP
   selector:
@@ -56,7 +56,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mssql-loadbalancer
+  name: mssql-coursesdb-loadbalancer
 spec:
   type: LoadBalancer
   selector:

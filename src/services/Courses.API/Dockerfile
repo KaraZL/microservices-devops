@@ -1,10 +1,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /app
-COPY *.csproj ./
+COPY src/services/Courses.API/*.csproj ./
 #pas besoin de tout le projet pour récupérer les dépendences
 RUN dotnet restore
 
-COPY . ./
+COPY src/services/Courses.API/ ./
 #copie le reste des fichiers
 RUN dotnet publish -c Release -o /out
 #on publish dans app/out
