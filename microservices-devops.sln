@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Courses.API", "src\services
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeneralStore.API", "src\services\GeneralStore.API\GeneralStore.API.csproj", "{5787D515-4E19-4F6F-B621-85F0514BD27B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Books.API", "src\services\Books.API\Books.API.csproj", "{85B32F59-31F8-46BB-960B-8D8675E82EE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{5787D515-4E19-4F6F-B621-85F0514BD27B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5787D515-4E19-4F6F-B621-85F0514BD27B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5787D515-4E19-4F6F-B621-85F0514BD27B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85B32F59-31F8-46BB-960B-8D8675E82EE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85B32F59-31F8-46BB-960B-8D8675E82EE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85B32F59-31F8-46BB-960B-8D8675E82EE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85B32F59-31F8-46BB-960B-8D8675E82EE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -30,6 +36,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7D9AE68C-DA1D-4565-B2BE-732E1CB1FEC5} = {8E8B1737-B885-4A61-AA78-DC17FCCB1C60}
 		{5787D515-4E19-4F6F-B621-85F0514BD27B} = {8E8B1737-B885-4A61-AA78-DC17FCCB1C60}
+		{85B32F59-31F8-46BB-960B-8D8675E82EE9} = {8E8B1737-B885-4A61-AA78-DC17FCCB1C60}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B826CDD6-8B76-4A34-8672-479868AA8CAE}
