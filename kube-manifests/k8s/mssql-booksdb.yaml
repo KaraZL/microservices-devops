@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mssql-booksdb-deployment
+spec:
+  selector:
+    matchLabels:
+      app: booksdb
+  template:
+    metadata:
+      labels:
+        app: booksdb
+    spec:
+      containers:
+      - name: booksdb
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+        - containerPort: 1433
+        env:
+        - name: SA_PASSWORD
+          value: Pa55w0rd2022
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_PID
+          value: "Express"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssql-booksdb-clusterip
+spec:
+  type: ClusterIP
+  selector:
+    app: booksdb
+  ports:
+  - port: 1433
+    targetPort: 1433
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssql-booksdb-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: booksdb
+  ports:
+  - port: 1435
+    targetPort: 1433 #Tout comme dans Docker Compose, le port externe est 1434 mais interne reste le même 1433 car SQL server utilise uniquement ce port
+    protocol: TCP
+
+
