@@ -21,6 +21,16 @@ services:
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Express"
 
+  booksdb:
+    container_name: booksdb
+    restart: always
+    ports:
+      - 1435:1433 #1343 pour y acceder mais 1433 car c est le port de SQL server. On ne le change pas
+    environment:
+      SA_PASSWORD: "Pa55w0rd2022"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+
   rabbitmq:
     container_name: rabbitmq
     restart: always
@@ -66,3 +76,14 @@ services:
       - "RabbitMQPort=5672"
       - "Kestrel:Endpoints:WebApi:Url=http://generalstore-api:80" #Http1
       - "Kestrel:Endpoints:Grpc:Url=http://generalstore-api:666" #Http2
+
+  books.api:
+    container_name: books-api
+    depends_on:
+      - booksdb
+    ports:
+      - 8002:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:SqlServer=Server=booksdb,1433;User Id=SA;Password=Pa55w0rd2022;" 
+      - "ConnectionStrings:SqlDatabase=Server=booksdb,1433;Database=BooksDb;User Id=SA;Password=Pa55w0rd2022;"

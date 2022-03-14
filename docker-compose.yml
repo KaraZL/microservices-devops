@@ -10,6 +10,9 @@ services:
   storedb:
     image: mcr.microsoft.com/mssql/server:2019-CU15-ubuntu-20.04
 
+  booksdb:
+    image: mcr.microsoft.com/mssql/server:2019-CU15-ubuntu-20.04
+
   rabbitmq:
     image: rabbitmq:3.9-management
 
@@ -27,6 +30,12 @@ services:
     build:
       context: .
       dockerfile: src/services/GeneralStore.API/Dockerfile
+
+  books.api:
+    image: booksapi
+    build:
+      context: .
+      dockerfile: src/services/Books.API/Dockerfile
       
 volumes:
   portainer_data:
