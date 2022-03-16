@@ -18,6 +18,11 @@ services:
 
   portainer:
     image: portainer/portainer-ce
+
+  #si dockerfile est dans le meme dossier que docker-compose
+  #courses.api:
+  #  image: coursesapi
+    #build: .
   
   courses.api:
     image: coursesapi
@@ -36,6 +41,12 @@ services:
     build:
       context: .
       dockerfile: src/services/Books.API/Dockerfile
-      
+
+  azurestore.api:
+    image: azurestoreapi
+    build:
+      context:  .
+      dockerfile: src/services/AzureStore/AzureStore.API/Dockerfile
+
 volumes:
   portainer_data:
