@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azurestoreapi-deployment
+  labels:
+    app: azurestoreapi
+spec:
+  selector:
+    matchLabels:
+      app: azurestoreapi
+  template:
+    metadata:
+      labels:
+        app: azurestoreapi
+    spec:
+      containers:
+      - name: azurestoreapi
+        image: azurestoreapi:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ConnectionStrings__ServiceBusUrl
+          value: Endpoint=sb://microservices-devops.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=pDR+Gy2ZFAnUVKQST5fx2ZjOq73fGKoNmuNPBBnnLI8=
+        - name: ApplicationInsights__InstrumentationKey
+          value: InstrumentationKey=0ed1861e-a393-4834-a005-3919002bb4fb;IngestionEndpoint=https://francecentral-1.in.applicationinsights.azure.com/
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: azurestoreapi-loadbalancer-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: azurestoreapi
+  ports:
+  - port: 8084
+    targetPort: 80
+    protocol: TCP
+
