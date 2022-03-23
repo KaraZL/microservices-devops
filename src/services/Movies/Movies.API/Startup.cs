@@ -8,10 +8,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Movies.DataAccess.Repository;
 using Movies.DataAccess.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Movies.DataAccess;
 using Movies.API.Migrations;
 using FluentMigrator.Runner;
@@ -32,6 +28,7 @@ namespace Movies.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             //From DataAccess - ApplicationServiceRegistration
             services.AddApplicationServices();
 
@@ -86,6 +83,7 @@ namespace Movies.API
             });
 
             PrepDb.Migrate(app);
+            
         }
     }
 }

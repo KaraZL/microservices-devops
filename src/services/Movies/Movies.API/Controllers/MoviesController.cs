@@ -32,10 +32,6 @@ namespace Movies.API.Controllers
          public async Task<ActionResult> AddMovie(Movie movie)
         {
             var result = await _mediator.Send(new InsertMovieCommand(movie));
-            if(result.GetType() != typeof(Movie))
-            {
-                return BadRequest(result);
-            }
             return Ok(result);
         }
 
