@@ -13,6 +13,9 @@ services:
   booksdb:
     image: mcr.microsoft.com/mssql/server:2019-CU15-ubuntu-20.04
 
+  moviesdb:
+    image: mcr.microsoft.com/mssql/server:2019-CU15-ubuntu-20.04
+
   rabbitmq:
     image: rabbitmq:3.9-management
 
@@ -47,6 +50,12 @@ services:
     build:
       context:  .
       dockerfile: src/services/AzureStore/AzureStore.API/Dockerfile
+
+  movies.api:
+    image: moviesapi
+    build:
+      context: .
+      dockerfile: src/services/Movies/Movies.API/Dockerfile
 
 volumes:
   portainer_data:
