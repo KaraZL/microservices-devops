@@ -29,10 +29,14 @@ namespace Movies.API.Controllers
         }
 
          [HttpPost("[action]")]
-         public IActionResult AddMovie(Movie movie)
+         public async Task<ActionResult> AddMovie(Movie movie)
         {
-            _mediator.Send(new InsertMovieCommand(movie));
-            return Ok();
+            var result = await _mediator.Send(new InsertMovieCommand(movie));
+            if(result.GetType() != typeof(Movie))
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
 
     }

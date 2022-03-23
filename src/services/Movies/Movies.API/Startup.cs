@@ -32,6 +32,8 @@ namespace Movies.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //From DataAccess - ApplicationServiceRegistration
+            services.AddApplicationServices();
 
             //Necessite IConfiguration dans Class Library
             //Necessaire dans DatabaseSeed

@@ -54,7 +54,7 @@ services:
       - coursesdb
       - rabbitmq
     ports:
-      - 8000:80
+      - 5000:80
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:SqlDatabase=Server=coursesdb,1433;Database=CoursesDb;User Id=SA;Password=Pa55w0rd2022;"
@@ -68,7 +68,7 @@ services:
       - storedb
       - rabbitmq
     ports:
-      - 8001:80
+      - 5001:80
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:SqlDatabase=Server=storedb,1433;Database=StoreDb;User Id=SA;Password=Pa55w0rd2022;"
@@ -82,7 +82,7 @@ services:
     depends_on:
       - booksdb
     ports:
-      - 8002:80
+      - 5002:80
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:SqlServer=Server=booksdb,1433;User Id=SA;Password=Pa55w0rd2022;" 
@@ -91,7 +91,7 @@ services:
   azurestore.api:
     container_name: azurestore-api
     ports:
-      - 8003:80
+      - 5003:80
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:ServiceBusUrl=Endpoint=sb://microservices-devops.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=pDR+Gy2ZFAnUVKQST5fx2ZjOq73fGKoNmuNPBBnnLI8="
