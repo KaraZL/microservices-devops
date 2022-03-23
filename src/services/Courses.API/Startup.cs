@@ -40,7 +40,7 @@ namespace Courses.API
             services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
             services.AddDbContext<DatabaseContext>(options => {
-                options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
+                //options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
             });
 
             //if (_env.IsDevelopment())
@@ -92,7 +92,7 @@ namespace Courses.API
                 endpoints.MapControllers();
             });
 
-            PrepDb.PrepPopulation(app);
+            //PrepDb.PrepPopulation(app);
         }
     }
 }

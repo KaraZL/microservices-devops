@@ -8,8 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Courses.API.Controllers
@@ -31,22 +29,34 @@ namespace Courses.API.Controllers
             _grpcClient = grpcClient;
         }
 
-        [HttpGet("{id}", Name = "GetBasket")]
-
-        public async Task<ActionResult<Course>> GetCourseById(int id)
-        {
-            var course = await _repo.GetCourseById(id);
-            return Ok(course);
-        }
-
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Course>>> GetAllCourses()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Course>))]
+        //Retirer ActionResult<IEnumerable<Course>> vers ActionResult
+        //pour les tests unitaires, sinon impossible de cast en OkObjectResult
+        //Du coup, on utilise ProducesResponseType pour indiquer le type de données
+
+        public async Task<ActionResult> GetAllCourses()
         {
             var courses = await _repo.GetAllCourses();
             return Ok(courses);
         }
 
+        [HttpGet("{id}", Name = "GetBasket")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Course))]
+
+        public async Task<ActionResult> GetCourseById(int id)
+        {
+            if (id < 0)
+            {
+                return BadRequest(id);
+            }
+            var course = await _repo.GetCourseById(id);
+            return Ok(course);
+        }
+
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Course))]
+
         public async Task<ActionResult> CreateCourse([FromBody] Course course)
         {
             var result = await _repo.CreateCourse(course);
@@ -56,6 +66,7 @@ namespace Courses.API.Controllers
 
         //Envoi sur le service bus
         [HttpPost("[action]")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CoursePublishedDto))]
         public async Task<ActionResult> SendCourseToBus([FromBody] CoursePublishedDto message)
         {
             try
@@ -73,7 +84,8 @@ namespace Courses.API.Controllers
         }
 
         [HttpGet("[action]")]
-        public ActionResult<IEnumerable<Course>> GetAllCoursesFromGrpcServer()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Course>))]
+        public ActionResult GetAllCoursesFromGrpcServer()
         {
             var courses = _grpcClient.ReturnAllCourses();
 
