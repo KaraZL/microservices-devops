@@ -31,7 +31,7 @@
   - Dapper
   - MediatR
   - Mapper
-  - FluentValidation (Behavior)
+  - FluentValidation (MediatR Pipeline Behavior)
 
 ### RabbitMQ <br>
 envoie un message "CoursePublishDto" depuis Courses.API vers GeneralStore.API. (PublishNewCourse dans MessageBusClient) <br>
@@ -49,7 +49,7 @@ Dapper ne créé pas automatiquement une base de données et ne permet pas des m
 
 ### MediatR (Movies) <br>
 MediatR est implémenté dans <b>Movies.DataAccess</b> puis <b>Movies.API</b> utilise MediatR pour lancer les méthodes de <b>DataAccess</b>.
-Queries (Read), Commands (Write), Handlers (Execute/Logic)
+Queries (Read), Commands (Write), Handlers (Execute/Logic) <br>
 <b>MediatR Pipeline Behavior</b> es utilisé pour valider les données envoyées par les requêtes (Commands). Dans <b>Movies.DataAccess</b>, dans le dossier <b>Behaviors</b>, il y a un validator pour une command et <b>ValidatorBehavior</b> pour traiter tous les validators une fois appelés.
 
 
