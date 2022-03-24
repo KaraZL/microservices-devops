@@ -31,6 +31,16 @@ services:
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Express"
 
+  moviesdb:
+    container_name: moviesdb
+    restart: always
+    ports:
+      - 1436:1433 #1343 pour y acceder mais 1433 car c est le port de SQL server. On ne le change pas
+    environment:
+      SA_PASSWORD: "Pa55w0rd2022"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+
   rabbitmq:
     container_name: rabbitmq
     restart: always
@@ -54,7 +64,7 @@ services:
       - coursesdb
       - rabbitmq
     ports:
-      - 8000:80
+      - 5000:80
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:SqlDatabase=Server=coursesdb,1433;Database=CoursesDb;User Id=SA;Password=Pa55w0rd2022;"
@@ -68,7 +78,7 @@ services:
       - storedb
       - rabbitmq
     ports:
-      - 8001:80
+      - 5001:80
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:SqlDatabase=Server=storedb,1433;Database=StoreDb;User Id=SA;Password=Pa55w0rd2022;"
@@ -82,7 +92,7 @@ services:
     depends_on:
       - booksdb
     ports:
-      - 8002:80
+      - 5002:80
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:SqlServer=Server=booksdb,1433;User Id=SA;Password=Pa55w0rd2022;" 
@@ -91,9 +101,19 @@ services:
   azurestore.api:
     container_name: azurestore-api
     ports:
-      - 8003:80
+      - 5003:80
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:ServiceBusUrl=Endpoint=sb://microservices-devops.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=pDR+Gy2ZFAnUVKQST5fx2ZjOq73fGKoNmuNPBBnnLI8="
       - "ConnectionStrings:QueueName=zafina-queue"
       - "ApplicationInsights:InstrumentationKey=InstrumentationKey=0ed1861e-a393-4834-a005-3919002bb4fb;IngestionEndpoint=https://francecentral-1.in.applicationinsights.azure.com/"
+
+  movies.api:
+    container_name: movies-api
+    ports:
+      - 5004:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:SqlServer=Server=moviesdb,1433;User Id=SA;Password=Pa55w0rd2022;" 
+      - "ConnectionStrings:SqlDatabase=Server=moviesdb,1433;Database=MoviesDb;User Id=SA;Password=Pa55w0rd2022;"
+      

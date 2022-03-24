@@ -17,6 +17,7 @@ using Xunit;
 
 namespace Courses.Tests.Controllers
 {
+    //Unit Test
     public class CoursesControllerTests
     {
         private readonly CoursesController _sut; //system under test

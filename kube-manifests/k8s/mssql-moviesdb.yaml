@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mssql-moviesdb-deployment
+spec:
+  selector:
+    matchLabels:
+      app: moviesdb
+  template:
+    metadata:
+      labels:
+        app: moviesdb
+    spec:
+      containers:
+      - name: moviesdb
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+        - containerPort: 1433
+        env:
+        - name: SA_PASSWORD
+          value: Pa55w0rd2022
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_PID
+          value: "Express"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssql-moviesdb-clusterip
+spec:
+  type: ClusterIP
+  selector:
+    app: moviesdb
+  ports:
+  - port: 1433 #Des pods peuvent être sur le même port, ça ne pose pas de problème
+    targetPort: 1433
+    protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssql-movies-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: moviesdb
+  ports:
+  - port: 1436
+    targetPort: 1433
+    protocol: TCP
+
+

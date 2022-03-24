@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movies-api-deployment
+  labels:
+    app: movies-api
+spec:
+  selector:
+    matchLabels:
+      app: movies-api
+  template:
+    metadata:
+      labels:
+        app: movies-api
+    spec:
+      containers:
+      - name: movies-api
+        image: moviesapi:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ConnectionStrings__SqlServer
+          value: Server=mssql-moviesdb-clusterip,1433;User Id=SA;Password=Pa55w0rd2022
+        - name: ConnectionStrings__SqlDatabase
+          value: Server=mssql-moviesdb-clusterip,1433;Database=MoviesDb;User Id=SA;Password=Pa55w0rd2022;
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moviesapi-loadbalancer-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: movies-api
+  ports:
+  - port: 8085
+    targetPort: 80
+    protocol: TCP
+
