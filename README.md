@@ -33,6 +33,11 @@
   - Mapper
   - FluentValidation (MediatR Pipeline Behavior)
 
+## Series.API
+  - .NET 6
+  - Redis
+  - Mapper
+
 ### RabbitMQ <br>
 envoie un message "CoursePublishDto" depuis Courses.API vers GeneralStore.API. (PublishNewCourse dans MessageBusClient) <br>
 GS.API récupère le message dans un background service <b>(MessageBusSubscriber)</b>, vérifie son event avec l'attribut Event de <b>"CoursePublishDto"</b> et l'ajoute à la BDD de GS.API <b>(EventProcessing)</b>
@@ -52,4 +57,5 @@ MediatR est implémenté dans <b>Movies.DataAccess</b> puis <b>Movies.API</b> ut
 Queries (Read), Commands (Write), Handlers (Execute/Logic) <br>
 <b>MediatR Pipeline Behavior</b> es utilisé pour valider les données envoyées par les requêtes (Commands). Dans <b>Movies.DataAccess</b>, dans le dossier <b>Behaviors</b>, il y a un validator pour une command et <b>ValidatorBehavior</b> pour traiter tous les validators une fois appelés.
 
-
+### Redis (Series)
+UJtilisation des tables de hachage car plus simple pour récupérer plusieurs éléments. Redis est utilisé en tant que base de données dans ce service. Redis permet d'avoir une persistance de données.
