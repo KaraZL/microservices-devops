@@ -41,6 +41,12 @@ services:
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Express"
 
+  redisdb:
+    container_name: redisdb
+    restart: always
+    ports:
+      - 6379:6379
+
   rabbitmq:
     container_name: rabbitmq
     restart: always
@@ -116,4 +122,14 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:SqlServer=Server=moviesdb,1433;User Id=SA;Password=Pa55w0rd2022;" 
       - "ConnectionStrings:SqlDatabase=Server=moviesdb,1433;Database=MoviesDb;User Id=SA;Password=Pa55w0rd2022;"
+
+  series.api:
+    container_name: series-api
+    ports:
+      - 5005:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:Redis=redisdb:6379"
+    depends_on:
+      - redisdb
       
