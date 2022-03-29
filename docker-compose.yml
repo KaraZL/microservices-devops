@@ -16,6 +16,9 @@ services:
   moviesdb:
     image: mcr.microsoft.com/mssql/server:2019-CU15-ubuntu-20.04
 
+  redisdb:
+    image: redis
+
   rabbitmq:
     image: rabbitmq:3.9-management
 
@@ -56,6 +59,12 @@ services:
     build:
       context: .
       dockerfile: src/services/Movies/Movies.API/Dockerfile
+
+  series.api:
+    image: seriesapi
+    build:
+      context: .
+      dockerfile: src/services/Series.API/Dockerfile
 
 volumes:
   portainer_data:
