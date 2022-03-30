@@ -64,7 +64,7 @@ services:
     image: seriesapi
     build:
       context: .
-      dockerfile: src/services/Series.API/Dockerfile
+      dockerfile: src/services/Series/Series.API/Dockerfile
 
 volumes:
   portainer_data:

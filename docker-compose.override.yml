@@ -129,7 +129,7 @@ services:
       - 5005:80
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - "ConnectionStrings:Redis=redisdb:6379"
+      - "ConnectionStrings:Redis=redisdb"
     depends_on:
       - redisdb
       
