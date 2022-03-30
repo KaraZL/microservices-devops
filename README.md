@@ -33,10 +33,16 @@
   - Mapper
   - FluentValidation (MediatR Pipeline Behavior)
 
-## Series.API
-  - .NET 6
-  - Redis
-  - Mapper
+## Series.API .NET 6
+  - MediatR
+## Series.Application
+  - FluentValidation
+  - MediatR.Extensions
+## Series.Domain
+  - Rien
+## Series.Infrastructure
+  - MS.StackExchangeRedis
+  - MS.Configuration.Abstractions
 
 ### RabbitMQ <br>
 envoie un message "CoursePublishDto" depuis Courses.API vers GeneralStore.API. (PublishNewCourse dans MessageBusClient) <br>
@@ -57,5 +63,12 @@ MediatR est implémenté dans <b>Movies.DataAccess</b> puis <b>Movies.API</b> ut
 Queries (Read), Commands (Write), Handlers (Execute/Logic) <br>
 <b>MediatR Pipeline Behavior</b> es utilisé pour valider les données envoyées par les requêtes (Commands). Dans <b>Movies.DataAccess</b>, dans le dossier <b>Behaviors</b>, il y a un validator pour une command et <b>ValidatorBehavior</b> pour traiter tous les validators une fois appelés.
 
+### Clean Architecture (Series)
+4 dossier <b>(API, Application, Domain, Infrastrusture)</b>. <br>
+<b>Infrastructure</b> comprend la BDD Redis avec la connexion string et le repository. <br>
+<b>Domain</b> comprend le pattern Domain Driven Design avec les models (Entities, BaseEntity et ValueObjects). <br>
+<b>Application</b> comprend le pattern CQRS avec MediatR et des behaviors pour gérer les CRUD opérations. <br>
+<b>API</b> utilise MediatR pour appeler les commands et Queries de <b>Application</b>.
+
 ### Redis (Series)
-UJtilisation des tables de hachage car plus simple pour récupérer plusieurs éléments. Redis est utilisé en tant que base de données dans ce service. Redis permet d'avoir une persistance de données.
+Utilisation des tables de hachage car plus simple pour récupérer plusieurs éléments. Redis est utilisé en tant que base de données dans ce service. Redis permet d'avoir une persistance de données.
