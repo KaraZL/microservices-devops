@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-seriesdb-deployment
+spec:
+  selector:
+    matchLabels:
+      app: seriesdb
+  template:
+    metadata:
+      labels:
+        app: seriesdb
+    spec:
+      containers:
+      - name: seriesdb
+        image: redis:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 6379
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-seriesdb-service-clusterip
+spec:
+  type: ClusterIP
+  selector:
+    app: seriesdb
+  ports:
+  - port: 6379
+    targetPort: 6379
+    protocol: TCP

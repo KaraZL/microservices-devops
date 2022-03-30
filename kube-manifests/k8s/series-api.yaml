@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seriesapi-deployment
+spec:
+  selector:
+    matchLabels:
+      app: seriesapi
+  template:
+    metadata:
+      labels:
+        app: seriesapi
+    spec:
+      containers:
+      - name: seriesapi
+        image: seriesapi:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ConnectionStrings__Redis
+          value: redis-seriesdb-service-clusterip
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seriesapi-service-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: seriesapi
+  ports:
+  - port: 8086
+    targetPort: 80
+    protocol: TCP
+

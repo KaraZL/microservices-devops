@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Series.API.Dto;
-using Series.API.Models;
+﻿using Series.Domain.Entites;
 using StackExchange.Redis;
 using System.Text.Json;
 
@@ -15,27 +13,27 @@ namespace Series.API.Data
         {
             _redis = redis;
         }
-        public void CreateSeries(CreateSeriesDto series)
+        public async Task CreateSeries(SeriesModel series)
         {
             var db = _redis.GetDatabase();
             var json = JsonSerializer.Serialize(series);
 
-            db.HashSet(RedisKeyName, new HashEntry[] {
+            await db.HashSetAsync(RedisKeyName, new HashEntry[] {
                 new HashEntry(series.Id, json)
             });
         }
 
-        public void DeleteSeries(string id)
+        public async Task DeleteSeries(string id)
         {
             var db = _redis.GetDatabase();
 
-            db.HashDelete(RedisKeyName, id);
+            await db.HashDeleteAsync(RedisKeyName, id);
         }
 
-        public IEnumerable<SeriesModel?>? GetAllSeries()
+        public async Task<IEnumerable<SeriesModel?>?> GetAllSeries()
         {
             var db = _redis.GetDatabase();
-            var json = db.HashGetAll(RedisKeyName);
+            var json = await db.HashGetAllAsync(RedisKeyName);
             if(json.Length > 0)
             {
                 var obj = Array.ConvertAll(json, val => JsonSerializer.Deserialize<SeriesModel>(val.Value)).ToList();
@@ -46,10 +44,10 @@ namespace Series.API.Data
             
         }
 
-        public SeriesModel? GetSeriesById(string id)
+        public async Task<SeriesModel?> GetSeriesById(string id)
         {
             var db = _redis.GetDatabase();
-            var json = db.HashGet(RedisKeyName, id);
+            var json = await db.HashGetAsync(RedisKeyName, id);
 
             var series = JsonSerializer.Deserialize<SeriesModel>(json);
 
@@ -57,12 +55,12 @@ namespace Series.API.Data
         }
 
         //same as Create except we dont use dto
-        public void UpdateSeries(SeriesModel series)
+        public async Task UpdateSeries(SeriesModel series)
         {
             var db = _redis.GetDatabase();
             var json = JsonSerializer.Serialize<SeriesModel>(series);
 
-            db.HashSet(RedisKeyName, new HashEntry[]
+            await db.HashSetAsync(RedisKeyName, new HashEntry[]
             {
                 new HashEntry(series.Id, json),
             });
