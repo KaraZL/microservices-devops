@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using GeneralStore.API.Policies;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,15 +11,17 @@ namespace GeneralStore.API.Data
         {
             using (var serviceScope = app.ApplicationServices.CreateScope()) //get context service to be used with seeddata
             {
-                SeedData(serviceScope.ServiceProvider.GetService<DatabaseContext>());
+                var policy = serviceScope.ServiceProvider.GetService<ClientPolicy>();
+                var context = serviceScope.ServiceProvider.GetService<DatabaseContext>();
+                SeedData(context, policy);
             }
         }
 
-        public static void SeedData(DatabaseContext context) //context needed for interacting with db
+        public static void SeedData(DatabaseContext context, ClientPolicy policy) //context needed for interacting with db
         {
             System.Console.WriteLine("Applying migrations...");
 
-            context.Database.Migrate();
+            policy.MigrationRetryPolicy.Execute(() => context.Database.Migrate());
 
             context.SaveChanges();
         }

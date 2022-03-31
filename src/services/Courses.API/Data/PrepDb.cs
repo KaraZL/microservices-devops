@@ -2,7 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
+using System;
 using Courses.API.Models;
+using Polly;
+using Microsoft.Data.SqlClient;
+using Courses.API.Policies;
 
 namespace Courses.API.Data
 {
@@ -10,17 +14,20 @@ namespace Courses.API.Data
     {
         public static void PrepPopulation(IApplicationBuilder app) //app to get service
         {
-            using(var serviceScope = app.ApplicationServices.CreateScope()) //get context service to be used with seeddata
+            using (var serviceScope = app.ApplicationServices.CreateScope()) //get context service to be used with seeddata
             {
-                SeedData(serviceScope.ServiceProvider.GetService<DatabaseContext>());
+                var policy = serviceScope.ServiceProvider.GetService<ClientPolicy>();
+                var context = serviceScope.ServiceProvider.GetService<DatabaseContext>();
+                SeedData(context, policy);
             }
         }
 
-        public static void SeedData(DatabaseContext context) //context needed for interacting with db
+        public static void SeedData(DatabaseContext context, ClientPolicy policy) //context needed for interacting with db
         {
-            System.Console.WriteLine("Applying migrations...");
+            Console.WriteLine("Applying migrations...");
 
-            context.Database.Migrate();
+            policy.MigrationRetryPolicy.Execute(() => context.Database.Migrate());
+
 
             if (!context.Course.Any())
             {

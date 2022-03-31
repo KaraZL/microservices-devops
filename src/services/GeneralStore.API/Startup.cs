@@ -15,6 +15,7 @@ using GeneralStore.API.MessageBus;
 using GeneralStore.API.Grpc;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using GeneralStore.API.Policies;
 
 namespace GeneralStore.API
 {
@@ -33,6 +34,8 @@ namespace GeneralStore.API
             services.AddDbContext<DatabaseContext>(options => {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
             });
+
+            services.AddSingleton<ClientPolicy>();
 
             services.AddGrpc();
 

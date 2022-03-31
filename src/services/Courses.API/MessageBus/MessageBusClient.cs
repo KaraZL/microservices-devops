@@ -1,4 +1,5 @@
 ﻿using Courses.API.Dtos;
+using Courses.API.Policies;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using System;
@@ -10,18 +11,19 @@ namespace Courses.API.MessageBus
     public class MessageBusClient : IMessageBusClient
     {
         private readonly IConfiguration _configuration;
+        private readonly ClientPolicy _policy;
         private readonly ConnectionFactory _factory;
         private readonly IConnection _connection;
         private readonly IModel _channel;
 
-        public MessageBusClient(IConfiguration configuration)
+        public MessageBusClient(IConfiguration configuration, ClientPolicy policy)
         {
             _configuration = configuration;
-
+            _policy = policy;
             _factory = new ConnectionFactory { HostName = _configuration["RabbitMQHost"], Port = int.Parse(_configuration["RabbitMQPort"]) };
             try
             {
-                _connection = _factory.CreateConnection();
+                _connection = _policy.RabbitMQRetryPolicy.Execute(() => _factory.CreateConnection());
                 _channel = _connection.CreateModel();
 
                 //4 types de exchanges

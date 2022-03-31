@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Courses.API.Data;
 using Courses.API.MessageBus;
 using Courses.API.Grpc;
+using Courses.API.Policies;
 
 namespace Courses.API
 {
@@ -32,6 +33,7 @@ namespace Courses.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<ClientPolicy>();
             services.AddScoped<ICoursesRepository, SqlCoursesRepository>();
             services.AddScoped<ICourseDataClient, CourseDataClient>();
 
@@ -40,23 +42,8 @@ namespace Courses.API
             services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
             services.AddDbContext<DatabaseContext>(options => {
-                //options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
+                options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
             });
-
-            //if (_env.IsDevelopment())
-            //{
-            //    services.AddDbContext<DatabaseContext>(options => {
-            //        options.UseInMemoryDatabase("InMem");
-            //    });
-            //}
-            //else
-            //{
-            //services.AddDbContext<DatabaseContext>(options => {
-            //        options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
-            //    });
-            //}
-
-            
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -92,7 +79,7 @@ namespace Courses.API
                 endpoints.MapControllers();
             });
 
-            //PrepDb.PrepPopulation(app);
+            PrepDb.PrepPopulation(app);
         }
     }
 }
