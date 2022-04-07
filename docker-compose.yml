@@ -25,6 +25,12 @@ services:
   portainer:
     image: portainer/portainer-ce
 
+  elasticsearch:
+    image: elasticsearch:7.17.2
+
+  kibana:
+    image: kibana:7.17.2
+
   #si dockerfile est dans le meme dossier que docker-compose
   #courses.api:
   #  image: coursesapi
@@ -68,3 +74,8 @@ services:
 
 volumes:
   portainer_data:
+  elasticsearch-data:
+
+#networks:
+#  docker-network:
+#    driver: bridge

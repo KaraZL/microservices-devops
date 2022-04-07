@@ -11,10 +11,12 @@ namespace Series.API.Controllers
     public class SeriesController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ILogger<SeriesController> _logger;
 
-        public SeriesController(IMediator mediator)
+        public SeriesController(IMediator mediator, ILogger<SeriesController> logger)
         {
             _mediator = mediator;
+            _logger = logger;
         }
 
         [HttpGet("[action]", Name = "GetAllSeries")]
@@ -26,8 +28,11 @@ namespace Series.API.Controllers
 
             if (list is null || !list.Any())
             {
+                _logger.LogError("--> Query : GetAllSeries - Null or Empty");
                 return NotFound();
             }
+
+            _logger.LogInformation("--> Query : GetAllSeries");
 
             return Ok(list);
         }
@@ -39,6 +44,8 @@ namespace Series.API.Controllers
             model.Id = $"series:{Guid.NewGuid()}";
             var command = new CreateSeriesCommand(model);
             var result = await _mediator.Send(command);
+
+            _logger.LogInformation("--> Command : PostSeries");
 
             return Ok(result);
         }
@@ -52,9 +59,11 @@ namespace Series.API.Controllers
 
             if(series is null)
             {
+                _logger.LogError("--> Query : GetById : Null");
                 return NotFound();
             }
 
+            _logger.LogInformation("--> Query : GetById");
             return Ok(series);
         }
     }

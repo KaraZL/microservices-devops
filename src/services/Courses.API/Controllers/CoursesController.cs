@@ -6,6 +6,7 @@ using Courses.API.MessageBus;
 using Courses.API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,13 +21,19 @@ namespace Courses.API.Controllers
         private readonly IMapper _mapper;
         private readonly IMessageBusClient _messageBusClient;
         private readonly ICourseDataClient _grpcClient;
+        private readonly ILogger<CoursesController> _logger;
 
-        public CoursesController(ICoursesRepository repo, IMapper mapper, IMessageBusClient messageBusClient, ICourseDataClient grpcClient)
+        public CoursesController(ICoursesRepository repo, 
+            IMapper mapper, 
+            IMessageBusClient messageBusClient, 
+            ICourseDataClient grpcClient,
+            ILogger<CoursesController> logger)
         {
             _repo = repo;
             _mapper = mapper;
             _messageBusClient = messageBusClient;
             _grpcClient = grpcClient;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -38,6 +45,7 @@ namespace Courses.API.Controllers
         public async Task<ActionResult> GetAllCourses()
         {
             var courses = await _repo.GetAllCourses();
+            _logger.LogInformation("--> Read : GetAllCourses");
             return Ok(courses);
         }
 
@@ -48,9 +56,11 @@ namespace Courses.API.Controllers
         {
             if (id < 0)
             {
+                _logger.LogError("--> Read : GetCourseById - Id lower than 0");
                 return BadRequest(id);
             }
             var course = await _repo.GetCourseById(id);
+            _logger.LogInformation("--> Read : GetCourseById");
             return Ok(course);
         }
 
@@ -60,8 +70,13 @@ namespace Courses.API.Controllers
         public async Task<ActionResult> CreateCourse([FromBody] Course course)
         {
             var result = await _repo.CreateCourse(course);
-
-            return result is true ? Ok(course) : BadRequest();
+            if(result is false)
+            {
+                _logger.LogError("--> Create : CreateCourse - returned false");
+                return BadRequest();
+            }
+            _logger.LogInformation("--> Create : CreateCourse");
+            return Ok(course);
         }
 
         //Envoi sur le service bus
@@ -73,11 +88,11 @@ namespace Courses.API.Controllers
             {
                 message.Event = "Courses_Published";
                 _messageBusClient.PublishNewCourse(message);
-                Console.WriteLine("--> Message sent to RabbitMQ");
+                _logger.LogInformation("--> RabbitMQ Sender : SendCourseToBus - Message Sent");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"--> Couldn't send message : {ex.Message}");
+                _logger.LogError($"--> RabbitMQ Sender : SendCourseToBus - Message Couldn't be sent : {ex.Message}");
             }
             
             return Ok(message);
@@ -88,6 +103,7 @@ namespace Courses.API.Controllers
         public ActionResult GetAllCoursesFromGrpcServer()
         {
             var courses = _grpcClient.ReturnAllCourses();
+            _logger.LogInformation("--> Grpc Sender : GetAllCoursesFromGrpcServer");
 
             return Ok(courses);
         }
@@ -96,7 +112,7 @@ namespace Courses.API.Controllers
         public ActionResult<Course> GetACourseByIdFromGrpcServer(int id)
         {
             var course = _grpcClient.GetCourseById(id);
-
+            _logger.LogInformation("--> Grpc Sender : GetACourseByIdFromGrpcServer");
             return Ok(course);
         }
 
@@ -104,8 +120,15 @@ namespace Courses.API.Controllers
         public async Task<ActionResult> DeleteCourse(int id)
         {
             var result = await _repo.DeleteCourse(id);
+            
+            if(result is false)
+            {
+                _logger.LogError("--> Delete : DeleteCourse - Returned False");
+                return BadRequest();
+            }
 
-            return result is true ? Ok(result) : BadRequest();
+            _logger.LogInformation("--> Delete : DeleteCourse");
+            return Ok(result);
         }
     }
 }
