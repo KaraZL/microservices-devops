@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch-deployment
+spec:
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      volumes:
+        - name: els-data
+          persistentVolumeClaim:
+            claimName: elasticsearch-pvc
+      containers:
+      - name: elasticsearch
+        imagePullPolicy: IfNotPresent
+        image: elasticsearch:7.17.2
+        ports:
+        - containerPort: 9200
+        env:
+        - name: xpack.monitoring.enabled
+          value: "true"
+        - name: xpack.watcher.enabled
+          value: "false"
+        - name: "ES_JAVA_OPTS"
+          value: "-Xms512m -Xmx512m"
+        - name:  discovery.type
+          value: single-node
+        volumeMounts:
+          - mountPath: /usr/share/elasticsearch/data
+            name: els-data
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-clusterip
+spec:
+  selector:
+    app: elasticsearch
+  ports:
+  - port: 9200
+    targetPort: 9200
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: elasticsearch
+  ports:
+  - port: 9300
+    targetPort: 9200
+
+

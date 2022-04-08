@@ -14,6 +14,7 @@ spec:
       containers:
       - name: seriesapi
         image: seriesapi:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
         env:
@@ -21,6 +22,8 @@ spec:
           value: Development
         - name: ConnectionStrings__Redis
           value: redis-seriesdb-service-clusterip
+        - name: ConnectionStrings__ElasticUri
+          value: http://elasticsearch-clusterip:9200
 
 ---
 apiVersion: v1
