@@ -16,6 +16,8 @@ using GeneralStore.API.Grpc;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using GeneralStore.API.Policies;
+using HealthChecks.UI.Client;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace GeneralStore.API
 {
@@ -46,6 +48,16 @@ namespace GeneralStore.API
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddRazorPages();
+
+            services.AddGrpcHealthChecks();
+            services
+                .AddHealthChecks()
+                .AddDbContextCheck<DatabaseContext>()
+                //amqp://localhost:5672
+                .AddRabbitMQ(
+                    rabbitConnectionString: $"amqp://{Configuration["RabbitMQHost"]}:{Configuration["RabbitMQPort"]}",
+                    name: "GeneralStores.API : Rabbitmq Subscriber",
+                    failureStatus: HealthStatus.Degraded); //important les parametres nommés pour les mettre dans l'ordre qu'on veut
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,6 +81,13 @@ namespace GeneralStore.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+
+                endpoints.MapHealthChecks("/hc", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+                endpoints.MapGrpcHealthChecksService();
 
                 //Pour chaque service
                 endpoints.MapGrpcService<GrpcCourseService>();
