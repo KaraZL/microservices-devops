@@ -48,6 +48,9 @@
   - Elastic Search
   - Kibana
   - Serilog
+ 
+ ## WebSatus (Blazor Server)
+  - HealthChecks.UI
 
 ### RabbitMQ <br>
 envoie un message "CoursePublishDto" depuis Courses.API vers GeneralStore.API. (PublishNewCourse dans MessageBusClient) <br>
@@ -80,3 +83,6 @@ Utilisation des tables de hachage car plus simple pour récupérer plusieurs él
 
 ### Elastic Stack (Series.API & Courses.API)
 Utilisation de <b>Serilog ILogger</b> (on pourrait utiliser logstash) pour envoyer les logs de <b>Series.API</b> et <b>Courses.API</b> vers <b>ElasticSearch</b> pour être lu sur l'interface <b>Kibana</b>.
+
+### HealthChecks
+Des HealthChecks sont implémentés dans tous les services. WebnStatus récupère tous les healthchecks des services et les ajoutent dans son UI.
