@@ -44,6 +44,11 @@
   - MS.StackExchangeRedis
   - MS.Configuration.Abstractions
 
+ ## Common.Logging
+  - Elastic Search
+  - Kibana
+  - Serilog
+
 ### RabbitMQ <br>
 envoie un message "CoursePublishDto" depuis Courses.API vers GeneralStore.API. (PublishNewCourse dans MessageBusClient) <br>
 GS.API récupère le message dans un background service <b>(MessageBusSubscriber)</b>, vérifie son event avec l'attribut Event de <b>"CoursePublishDto"</b> et l'ajoute à la BDD de GS.API <b>(EventProcessing)</b>
@@ -72,3 +77,6 @@ Queries (Read), Commands (Write), Handlers (Execute/Logic) <br>
 
 ### Redis (Series)
 Utilisation des tables de hachage car plus simple pour récupérer plusieurs éléments. Redis est utilisé en tant que base de données dans ce service. Redis permet d'avoir une persistance de données.
+
+### Elastic Stack (Series.API & Courses.API)
+Utilisation de <b>Serilog ILogger</b> (on pourrait utiliser logstash) pour envoyer les logs de <b>Series.API</b> et <b>Courses.API</b> vers <b>ElasticSearch</b> pour être lu sur l'interface <b>Kibana</b>.
