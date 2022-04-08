@@ -1,11 +1,14 @@
+using Common.Logging;
 using MediatR;
 using Series.API.Data;
 using Series.Application;
 using Series.Infrastructure;
+using Serilog;
 using StackExchange.Redis;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog(SeriLogger.Configure);
 
 //From Clean architectures services
 builder.Services.AddApplicationServices();

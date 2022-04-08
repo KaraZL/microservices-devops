@@ -7,6 +7,7 @@ using RabbitMQ.Client;
 using System;
 using RabbitMQ.Client.Events;
 using System.Text;
+using GeneralStore.API.Policies;
 
 namespace GeneralStore.API.MessageBus
 {
@@ -15,17 +16,18 @@ namespace GeneralStore.API.MessageBus
     {
         private readonly IConfiguration _configuration;
         private readonly IEventProcessor _processor;
+        private readonly ClientPolicy _policy;
         private string _queueName;
 
         public IConnection _connection { get; private set; }
         public IModel _channel { get; private set; }
 
         //We can inject processor because it is also singleton
-        public MessageBusSubscriber(IConfiguration configuration, IEventProcessor processor)
+        public MessageBusSubscriber(IConfiguration configuration, IEventProcessor processor, ClientPolicy policy)
         {
             _configuration = configuration;
             _processor = processor;
-
+            _policy = policy;
             InitializeRabbitMQ();
         }
 
@@ -65,7 +67,7 @@ namespace GeneralStore.API.MessageBus
                 Port = int.Parse(_configuration["RabbitMQPort"])
             };
 
-            _connection = factory.CreateConnection();
+            _connection = _policy.RabbitMQRetryPolicy.Execute(() => factory.CreateConnection());
             _channel = _connection.CreateModel();
 
             _channel.ExchangeDeclare(exchange: "trigger", type: ExchangeType.Fanout);

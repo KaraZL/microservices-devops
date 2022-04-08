@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\buildingblocks\Common.Logging\Common.Logging.csproj" />
     <ProjectReference Include="..\Series.Application\Series.Application.csproj" />
   </ItemGroup>
 

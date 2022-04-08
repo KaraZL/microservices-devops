@@ -62,7 +62,32 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     ports:
-      - 9000:9000 #9000 plutot que 9443 parce que http et non https
+      - 9000:9000
+    #9000 plutot que 9443 parce que http et non https
+
+  elasticsearch:
+    container_name: elasticsearch
+    restart: always
+    ports:
+      - 9200:9200
+    environment:
+      - xpack.monitoring.enabled=true
+      - xpack.watcher.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+      #Specifies whether Elasticsearch should form a multiple-node cluster.*
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+
+  kibana:
+    container_name: kibana
+    restart: always
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
 
   courses.api:
     container_name: courses-api
@@ -77,6 +102,7 @@ services:
       - "RabbitMQHost=rabbitmq"
       - "RabbitMQPort=5672"
       - "GrpcCourseServer=http://generalstore-api:666" #666 port du http2 de grpc
+      - "ConnectionStrings:ElasticUri=http://elasticsearch:9200"
 
   generalstore.api:
     container_name: generalstore-api
@@ -130,6 +156,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:Redis=redisdb"
+      - "ConnectionStrings:ElasticUri=http://elasticsearch:9200"
     depends_on:
       - redisdb
       
