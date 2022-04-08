@@ -41,3 +41,15 @@ spec:
     targetPort: 80
     protocol: TCP
 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: azurestoreapi-clusterip
+spec:
+  selector:
+    app: azurestoreapi
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
