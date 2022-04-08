@@ -15,6 +15,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentMigrator.Runner;
 using System.Reflection;
+using HealthChecks.UI.Client;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Books.API
 {
@@ -47,6 +49,10 @@ namespace Books.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Books.API", Version = "v1" });
             });
+
+            services.AddHealthChecks()
+                .AddSqlServer(Configuration.GetConnectionString("SqlDatabase"), name: "Books.API : SQL Server", failureStatus: HealthStatus.Degraded);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,6 +72,12 @@ namespace Books.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                endpoints.MapHealthChecks("/hc", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
             });
 
             PrepDb.PrepPopulation(app);

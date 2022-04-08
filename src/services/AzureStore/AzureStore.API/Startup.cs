@@ -1,9 +1,11 @@
 using AzureStore.API.ServiceBus;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
@@ -39,7 +41,13 @@ namespace AzureStore.API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AzureStore.API", Version = "v1" });
             });
 
-            
+            services.AddHealthChecks()
+                    .AddAzureServiceBusQueue(queueName: Configuration.GetConnectionString("QueueName"),
+                                            connectionString: Configuration.GetConnectionString("ServiceBusUrl"),
+                                            name: "AzureStore.API : Azure Service Bus",
+                                            failureStatus: HealthStatus.Degraded);
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,6 +66,11 @@ namespace AzureStore.API
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/hc", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
                 endpoints.MapControllers();
             });
         }

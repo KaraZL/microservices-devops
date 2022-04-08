@@ -159,4 +159,28 @@ services:
       - "ConnectionStrings:ElasticUri=http://elasticsearch:9200"
     depends_on:
       - redisdb
-      
+
+  webstatus:
+    container_name: webstatus
+    ports:
+      - 5050:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+      - HealthChecks-UI__HealthChecks__0__Name=Courses.API Health Check
+      - HealthChecks-UI__HealthChecks__0__Uri=http://courses-api/hc #/hc pour le lien healthchecks
+
+      - HealthChecks-UI__HealthChecks__1__Name=GeneralStore.API Health Check
+      - HealthChecks-UI__HealthChecks__1__Uri=http://generalstore-api/hc
+
+      - HealthChecks-UI__HealthChecks__2__Name=Books.API Health Check
+      - HealthChecks-UI__HealthChecks__2__Uri=http://generalstore-api/hc
+
+      - HealthChecks-UI__HealthChecks__3__Name=AzureStore.API Health Check
+      - HealthChecks-UI__HealthChecks__3__Uri=http://azurestore-api/hc
+
+      - HealthChecks-UI__HealthChecks__4__Name=Movies.API Health Check
+      - HealthChecks-UI__HealthChecks__4__Uri=http://movies-api/hc
+
+      - HealthChecks-UI__HealthChecks__5__Name=Series.API Health Check
+      - HealthChecks-UI__HealthChecks__5__Uri=http://series-api/hc

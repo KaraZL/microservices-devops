@@ -1,20 +1,17 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Courses.API.Data;
 using Courses.API.MessageBus;
 using Courses.API.Grpc;
 using Courses.API.Policies;
+using HealthChecks.UI.Client;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Courses.API
 {
@@ -52,6 +49,15 @@ namespace Courses.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Courses.API", Version = "v1" });
             });
+
+            services
+                .AddHealthChecks()
+                .AddDbContextCheck<DatabaseContext>()
+                //amqp://localhost:5672
+                .AddRabbitMQ(
+                    rabbitConnectionString: $"amqp://{Configuration["RabbitMQHost"]}:{Configuration["RabbitMQPort"]}",
+                    name: "Courses.API : RabbitMQ Publisher",
+                    failureStatus: HealthStatus.Degraded);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,6 +82,11 @@ namespace Courses.API
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/hc", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
                 endpoints.MapControllers();
             });
 

@@ -13,6 +13,8 @@ using Movies.API.Migrations;
 using FluentMigrator.Runner;
 using System.Reflection;
 using MediatR;
+using HealthChecks.UI.Client;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Movies.API
 {
@@ -61,6 +63,9 @@ namespace Movies.API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Movies.API", Version = "v1" });
             });
 
+            services.AddHealthChecks()
+                    .AddSqlServer(connectionString: Configuration.GetConnectionString("SqlDatabase"), name: "Movies.API : Sql Server", failureStatus: HealthStatus.Degraded);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,6 +84,11 @@ namespace Movies.API
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/hc", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
                 endpoints.MapControllers();
             });
 
