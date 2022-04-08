@@ -30,7 +30,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: booksapi
+  name: booksapi-loadbalancer
 spec:
   type: LoadBalancer
   selector:
@@ -39,4 +39,15 @@ spec:
   - port: 8083
     targetPort: 80
     protocol: TCP
-
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: booksapi-clusterip
+spec:
+  selector:
+    app: booksapi
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
