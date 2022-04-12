@@ -8,7 +8,7 @@ namespace Series.Infrastructure
 {
     public static class InfrastructureServiceRegistration
     {
-        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration, ConnectionMultiplexer redisConnection)
         {
             var retryRedis = Policy.Handle<RedisException>()
                                     .WaitAndRetry(
@@ -19,7 +19,8 @@ namespace Series.Infrastructure
                                             Console.WriteLine($"--Series.Infrastructure : Redis Connect Retry Policy... {retryCount}");
                                         });
 
-            services.AddSingleton<IConnectionMultiplexer>(options => retryRedis.Execute(() => ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis"))));
+            services.AddSingleton<IConnectionMultiplexer>(options => retryRedis.Execute(() => redisConnection));
+            //services.AddSingleton<IConnectionMultiplexer>(options => retryRedis.Execute(() => ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis"))));
             services.AddScoped<ISeriesRepo, RedisSeriesRepo>();
 
             return services;

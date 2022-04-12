@@ -89,6 +89,12 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
 
+  zipkin:
+    container_name: zipkin
+    restart: always
+    ports:
+      - 9411:9411
+
   courses.api:
     container_name: courses-api
     depends_on:
@@ -103,6 +109,8 @@ services:
       - "RabbitMQPort=5672"
       - "GrpcCourseServer=http://generalstore-api:666" #666 port du http2 de grpc
       - "ConnectionStrings:ElasticUri=http://elasticsearch:9200"
+      - "ZipkinUri=http://zipkin:9411/api/v2/spans"
+
 
   generalstore.api:
     container_name: generalstore-api
@@ -157,6 +165,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:Redis=redisdb"
       - "ConnectionStrings:ElasticUri=http://elasticsearch:9200"
+      - "ZipkinUri=http://zipkin:9411/api/v2/spans"
     depends_on:
       - redisdb
 

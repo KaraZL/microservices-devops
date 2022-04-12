@@ -12,6 +12,8 @@ using Courses.API.Grpc;
 using Courses.API.Policies;
 using HealthChecks.UI.Client;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Resources;
 
 namespace Courses.API
 {
@@ -50,6 +52,7 @@ namespace Courses.API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Courses.API", Version = "v1" });
             });
 
+            //HealthChecks
             services
                 .AddHealthChecks()
                 .AddDbContextCheck<DatabaseContext>()
@@ -58,6 +61,25 @@ namespace Courses.API
                     rabbitConnectionString: $"amqp://{Configuration["RabbitMQHost"]}:{Configuration["RabbitMQPort"]}",
                     name: "Courses.API : RabbitMQ Publisher",
                     failureStatus: HealthStatus.Degraded);
+
+            //Telemetry
+            services.AddOpenTelemetryTracing(builder =>
+            {
+                builder
+                    .SetResourceBuilder(resourceBuilder: ResourceBuilder.CreateDefault().AddService("CoursesApi")) //Name of the service
+                    .AddAspNetCoreInstrumentation(options => { })
+                    .AddHttpClientInstrumentation(options => { })
+                    .AddGrpcClientInstrumentation(options =>
+                    {
+                        options.SuppressDownstreamInstrumentation = true; //prevents the HttpClient instrumentation from generating an additional activity
+                    })
+                    .AddEntityFrameworkCoreInstrumentation(options => { options.SetDbStatementForText = true; })
+                    .AddZipkinExporter(options =>
+                    {
+                        options.Endpoint = new Uri(Configuration["ZipkinUri"]); //default http://localhost:9411/api/v2/spans
+                    });
+
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
